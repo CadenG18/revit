@@ -1,0 +1,240 @@
+{
+  "Uuid": "38400672-b9b7-4afb-93fc-e590bb006644",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Rotate",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dc9e",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dca6",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dca7",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dca8",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dca9",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcaa",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcab",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcac",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcb6",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcbe",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcbf",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcc0",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcc1",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcc2",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcc3",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcc4",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcce",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcd6",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcd7",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcd8",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcd9",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcda",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcdb",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcdc",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dce6",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcee",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcef",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcf0",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcf1",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcf2",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcf3",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcf4",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dcfe",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd06",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd07",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd08",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd09",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd0a",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd0b",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd0c",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd16",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd1e",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd1f",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd20",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd21",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd22",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd23",
+        "f0e04bc1-abb7-4722-aff5-a4c3047026b9-0031dd24",
+        "5eb1fae7-f4d2-4ba8-81e0-0d43ff8fa541-00326d05"
+      ],
+      "Id": "1285e99fb3fe4ed6842fb5f8bae92074",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d041fe528c5043dbb2c1db6a8dc87232",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "180;",
+      "Id": "c5573e486aab4ddb8d26ba1ab5a0233d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "281604c56c4b46f9ab2a7f9824839f16",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.FamilyInstance.SetRotation@double",
+      "Id": "5be263fb069749cd9856d9aa79a72c2b",
+      "Inputs": [
+        {
+          "Id": "923c067e769b4ddb962391a1af0bf261",
+          "Name": "familyInstance",
+          "Description": "Revit.Elements.FamilyInstance",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "79af55ac5afa4236bd604f56c635b274",
+          "Name": "degree",
+          "Description": "The Euler angle around Z-axis.\n\ndouble",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3a35a851b5ea40e8bab229941781e67c",
+          "Name": "FamilyInstance",
+          "Description": "The result family instance.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Set the Euler angle of the family instance around its local Z-axis.\n\nFamilyInstance.SetRotation (degree: double): FamilyInstance"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "d041fe528c5043dbb2c1db6a8dc87232",
+      "End": "923c067e769b4ddb962391a1af0bf261",
+      "Id": "936a50a041e347059700cd43f1d93449",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "281604c56c4b46f9ab2a7f9824839f16",
+      "End": "79af55ac5afa4236bd604f56c635b274",
+      "Id": "74faa447898744b9bcd5b32ace08d473",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.16",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "3.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.16.2.5624",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Select Model Elements",
+        "ShowGeometry": true,
+        "Id": "1285e99fb3fe4ed6842fb5f8bae92074",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 272.0,
+        "Y": 470.0
+      },
+      {
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Id": "c5573e486aab4ddb8d26ba1ab5a0233d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 454.0,
+        "Y": 662.0
+      },
+      {
+        "Name": "FamilyInstance.SetRotation",
+        "ShowGeometry": true,
+        "Id": "5be263fb069749cd9856d9aa79a72c2b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 695.0,
+        "Y": 441.0
+      }
+    ],
+    "Annotations": [],
+    "X": 172.3175,
+    "Y": -29.615000000000009,
+    "Zoom": 0.8425
+  }
+}

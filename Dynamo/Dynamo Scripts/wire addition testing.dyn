@@ -1,0 +1,200 @@
+{
+  "Uuid": "86009bdb-df84-4d28-8c86-c50184ed4c00",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "wire addition testing",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944034",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944035",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944036",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944037"
+      ],
+      "Id": "bb829676781f41058a6da3afbeed36f8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "266a7a5d24ec4eedb1633bf700c3e3b4",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select multiple elements from the Revit document."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Views, DSRevitNodesUI",
+      "SelectedIndex": 277,
+      "SelectedString": "POWER - SEGMENTS MASTER",
+      "Id": "742503726fe340aa933cf5879f8a77c9",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a1373004978e46a3bdfc99e28e82f849",
+          "Name": "Views",
+          "Description": "The selected Views",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All views available in the current document."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Dynamo/Revit imports\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, XYZ\r\nfrom Autodesk.Revit.DB.Electrical import Wire, WireType, WiringType\r\n\r\n# Current document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Inputs from Dynamo\r\nfixtures = UnwrapElement(IN[0])  # list of electrical fixtures\r\nview = UnwrapElement(IN[1])      # view to draw wires in\r\n\r\n# Get first available WireType\r\nwire_types = FilteredElementCollector(doc)\\\r\n    .OfCategory(BuiltInCategory.OST_Wire)\\\r\n    .WhereElementIsElementType()\\\r\n    .ToElements()\r\nwire_type = wire_types[0] if len(wire_types) > 0 else None\r\n\r\nwire_length = 4.0  # feet offset from connector\r\nwires_created = []\r\n\r\ndef get_first_connector(element):\r\n    \"\"\"Return the first electrical Connector object of an element, or None.\"\"\"\r\n    conns = None\r\n    # For family instances\r\n    if hasattr(element, \"MEPModel\") and element.MEPModel:\r\n        cm = element.MEPModel.ConnectorManager\r\n        if cm:\r\n            conns = cm.Connectors\r\n    # For other MEP elements\r\n    elif hasattr(element, \"ConnectorManager\") and element.ConnectorManager:\r\n        conns = element.ConnectorManager.Connectors\r\n\r\n    if conns:\r\n        for c in conns:\r\n            return c\r\n    return None\r\n\r\nif wire_type is not None:\r\n    TransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n    for fixture in fixtures:\r\n        start_connector = get_first_connector(fixture)\r\n\r\n        if start_connector:\r\n            start_pt = start_connector.Origin\r\n            # Create an artificial end point 4ft in +Y direction\r\n            end_pt = XYZ(start_pt.X, start_pt.Y + wire_length, start_pt.Z)\r\n\r\n            vertices = [start_pt, end_pt]\r\n\r\n            try:\r\n                # Here startConnector is the actual connector on the fixture\r\n                # endConnector is None (free end)\r\n                wire = Wire.Create(doc,\r\n                                   wire_type.Id,\r\n                                   view.Id,\r\n                                   WiringType.Arc,\r\n                                   vertices,\r\n                                   start_connector,\r\n                                   None)\r\n                wires_created.append(wire)\r\n            except Exception as e:\r\n                wires_created.append(\"Error: {}\".format(e))\r\n        else:\r\n            wires_created.append(\"No connector found for element ID {}\".format(fixture.Id))\r\n\r\n    TransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = wires_created\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "39dc0dbb4b1d49dcb11b0ba37329358f",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "d44239012c264e0aad67a24ff54a8ade",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6fa9cda24b354359a69a1d6602b9467c",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3bb097356e6b4103aaf3dea2e0f44d57",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "266a7a5d24ec4eedb1633bf700c3e3b4",
+      "End": "d44239012c264e0aad67a24ff54a8ade",
+      "Id": "aeea8522cf9c40ce97103faf3dceda81",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a1373004978e46a3bdfc99e28e82f849",
+      "End": "6fa9cda24b354359a69a1d6602b9467c",
+      "Id": "3b2e990c5bed48bc90bcb750f7b6dcd9",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.3",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "8.2",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.3.0.6316",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "bb829676781f41058a6da3afbeed36f8",
+        "Name": "Select Model Elements",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 406.54774736031743,
+        "Y": 1011.4134150946036
+      },
+      {
+        "Id": "742503726fe340aa933cf5879f8a77c9",
+        "Name": "Views",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 331.19160918426326,
+        "Y": 1200.5511208364044
+      },
+      {
+        "Id": "39dc0dbb4b1d49dcb11b0ba37329358f",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 884.8175687506424,
+        "Y": 1095.7693266361769
+      }
+    ],
+    "Annotations": [],
+    "X": -354.5420219031753,
+    "Y": -935.2001962482047,
+    "Zoom": 1.1713183573076469
+  }
+}

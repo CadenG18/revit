@@ -1,0 +1,336 @@
+{
+  "Uuid": "ba815510-5a08-43ce-8c15-e5d754ece43a",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Remove Electrical Fixtures from Circuit",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 212,
+      "SelectedString": "OST_ElectricalCircuit",
+      "Id": "fb6f8cfdf16c42ceaa7cf2ffc704e98f",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "eb6daf79ecec444a8a719e838735fbfb",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "Id": "5fb0bec4aa424b6d93f3662e39347f92",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "2afe880cf72d4344b0e6ea260deb4864",
+          "Name": "Category",
+          "Description": "The Category",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c9c6e4de9a584309b2f1693227330a23",
+          "Name": "Elements",
+          "Description": "An element class.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Get all elements of the specified category from the model."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "#Enable Python support and load DesignScript library\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n#import Revit Nodes\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n#import RevitAPI\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Electrical import *\r\n\r\n#import DocumentManager and TransactionManager\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n#The inputs to this node will be stored as a list in the IN variables.\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nElectricalComponents = UnwrapElement(IN[0])\r\nElectricalCircuits = UnwrapElement(IN[1])\r\nElecSet = ElementSet()\r\n\r\n#Place your code below this line\r\nfor element in ElectricalComponents:\r\n\tElecSet.Insert(element)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nfor circuit in ElectricalCircuits:\r\n\tcircuit.RemoveFromCircuit(ElecSet)\r\n\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\n#Assign your output to the OUT variable.\r\nOUT = ElectricalCircuits",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "1a8263aa7d0c47b180c2e2ba82bd0e20",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "470031f0c77f4e03a1aa0efd20af23b6",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "eabd795895384ca185d75d74e3d7c43d",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e159a03d04a44f34bbf5250a0780111d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 200.0,
+      "WatchHeight": 200.0,
+      "Id": "093bd836c0a940c386923d6b24af213d",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "4f09c557a3eb4347bb96be637af3755d",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dae694e8f1b743c280800ff64134f4d2",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944023",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944024",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944025",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944026",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944027",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944028",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944029",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094402a",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094402b",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094402c",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094402d",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944032",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944033",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944034",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944035",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944036",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944037",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094403c",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094403d",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094403e",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-0094403f",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944044",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944045",
+        "dca5b016-46e2-47c5-aca1-87c17d94582d-00944176",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c4",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c5",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c6",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c7",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c8",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472c9",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472ca",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472cb",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472cc",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472cd",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-009472ce",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947349",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734a",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734b",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734c",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734d",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734e",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-0094734f",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947350",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947351",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947352",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947353",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947354",
+        "a6fde8db-86f7-46f2-96ce-8d246d31968a-00947355"
+      ],
+      "Id": "5bfe261fc5d94d678a710e2b88dc2ff3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f2eb231b86ff435789e2b2e1503ee7e3",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select multiple elements from the Revit document."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "eb6daf79ecec444a8a719e838735fbfb",
+      "End": "2afe880cf72d4344b0e6ea260deb4864",
+      "Id": "da5992e6a2ff42d4b381948c80d09b05",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c9c6e4de9a584309b2f1693227330a23",
+      "End": "eabd795895384ca185d75d74e3d7c43d",
+      "Id": "4022c0fca740411b9699ad6f48feaf7e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "dae694e8f1b743c280800ff64134f4d2",
+      "End": "470031f0c77f4e03a1aa0efd20af23b6",
+      "Id": "bb3f59d7f22c4102a25c337ea576499c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f2eb231b86ff435789e2b2e1503ee7e3",
+      "End": "4f09c557a3eb4347bb96be637af3755d",
+      "Id": "d4a244861fae42d4a9cf075fa7205e30",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.16",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "3.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.3.0.6316",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "fb6f8cfdf16c42ceaa7cf2ffc704e98f",
+        "Name": "Categories",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 176.5,
+        "Y": 515.0
+      },
+      {
+        "Id": "5fb0bec4aa424b6d93f3662e39347f92",
+        "Name": "All Elements of Category",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 499.5,
+        "Y": 513.0
+      },
+      {
+        "Id": "1a8263aa7d0c47b180c2e2ba82bd0e20",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1285.3227892052246,
+        "Y": 360.7366100230919
+      },
+      {
+        "Id": "093bd836c0a940c386923d6b24af213d",
+        "Name": "Watch",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 739.8275569985126,
+        "Y": 116.0609815738602
+      },
+      {
+        "Id": "5bfe261fc5d94d678a710e2b88dc2ff3",
+        "Name": "Select Model Elements",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 294.4934902002051,
+        "Y": 72.32350381553942
+      }
+    ],
+    "Annotations": [],
+    "X": 81.83423379148621,
+    "Y": 304.80739870337226,
+    "Zoom": 0.7299508252707859
+  }
+}

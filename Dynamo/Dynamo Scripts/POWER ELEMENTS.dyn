@@ -1,0 +1,182 @@
+{
+  "Uuid": "87e1efa3-78de-4d16-a82a-b0213999c253",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "POWER ELEMENTS",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "7298536c2c9f4a7bb6858e98d9539346",
+      "Name": "SELECT FIXTURES",
+      "Type": "selection",
+      "Type2": "hostSelection",
+      "Value": "f6e16106-9fd8-4180-8163-e0ed919cfd65-007488b8,f6e16106-9fd8-4180-8163-e0ed919cfd65-007488da,f6e16106-9fd8-4180-8163-e0ed919cfd65-007488dc,f6e16106-9fd8-4180-8163-e0ed919cfd65-007488dd",
+      "Description": "Select multiple elements from the Revit document."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "f6e16106-9fd8-4180-8163-e0ed919cfd65-007488b8",
+        "f6e16106-9fd8-4180-8163-e0ed919cfd65-007488da",
+        "f6e16106-9fd8-4180-8163-e0ed919cfd65-007488dc",
+        "f6e16106-9fd8-4180-8163-e0ed919cfd65-007488dd"
+      ],
+      "Id": "7298536c2c9f4a7bb6858e98d9539346",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4f29f8877b8a40f8bed3885399519f66",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select multiple elements from the Revit document."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "bb728412-09f1-4839-8418-ae69559496e4",
+      "FunctionType": "Graph",
+      "Id": "448fb3f441344fafa0f208cd8bfff52a",
+      "NodeType": "FunctionNode",
+      "Inputs": [
+        {
+          "Id": "b6e5ab2a017f426a9124cc4754ad6853",
+          "Name": "Elems",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b415e0d1d5dd4715ba75578b5efce024",
+          "Name": "powerType",
+          "Description": "var\nDefault value : null",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4393fb1f34154aa39e3a82384870b627",
+          "Name": "Circuit",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Powers list of elements"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4f29f8877b8a40f8bed3885399519f66",
+      "End": "b6e5ab2a017f426a9124cc4754ad6853",
+      "Id": "1e7c33d6d6d247b88e04e48f23cfb482",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [
+    "bb728412-09f1-4839-8418-ae69559496e4"
+  ],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "RIE",
+      "Version": "2021.7.3",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "448fb3f441344fafa0f208cd8bfff52a"
+      ]
+    }
+  ],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.13",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "2.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.3.0.6316",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -16.493404388427734,
+      "EyeY": 24.0,
+      "EyeZ": 50.102508544921875,
+      "LookX": 11.493404388427734,
+      "LookY": -13.0,
+      "LookZ": -58.102508544921875,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "7298536c2c9f4a7bb6858e98d9539346",
+        "Name": "SELECT FIXTURES",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1164.194117451878,
+        "Y": -1744.8560526662118
+      },
+      {
+        "Id": "448fb3f441344fafa0f208cd8bfff52a",
+        "Name": "RIE_PowerElements",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1612.505907640041,
+        "Y": -1776.175100057507
+      }
+    ],
+    "Annotations": [],
+    "X": -203.65716665382274,
+    "Y": 1529.068055723452,
+    "Zoom": 0.5310400177206318
+  }
+}

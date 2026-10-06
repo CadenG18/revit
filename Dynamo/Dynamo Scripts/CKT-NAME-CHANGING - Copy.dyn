@@ -1,0 +1,346 @@
+{
+  "Uuid": "926f7b0c-39e6-40a5-9f14-bdf287c395b2",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "CKT-NAME-CHANGING",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportExcel@var,string,bool,bool",
+      "Id": "5760211e6efd4ed19653cb063ec0158f",
+      "Inputs": [
+        {
+          "Id": "e5b28dc151254d40bf29c00a891f422f",
+          "Name": "file",
+          "Description": "File representing the Excel workbook\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4e878805dcde40f7a13b3d98eee2673d",
+          "Name": "sheetName",
+          "Description": "Name of the worksheet containing data\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0b617354b654590ab8c787e6c7a627c",
+          "Name": "readAsStrings",
+          "Description": "Toggle to read cells as strings\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "506f19ed1a724f7f8d0c3bff5a1cda3b",
+          "Name": "showExcel",
+          "Description": "Toggle to show excel's main window\n\nbool\nDefault value : true",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "855d1a1c4cf7419e8fcf2eeb1d41dd34",
+          "Name": "data",
+          "Description": "Rows of data from the Excel worksheet",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Read data from a Microsoft Excel spreadsheet. Data is read by row and returned in a series of lists by row. Rows and columns are zero-indexed; for example, the value in cell A1 will appear in the data list at [0,0]. This node requires Microsoft Excel to be installed.\n\nData.ImportExcel (file: var, sheetName: string, readAsStrings: bool = false, showExcel: bool = true): var[][]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Load_Names",
+      "Id": "901acda0c49941878776a6fda1f210e4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d9af722b683c47a48a5b5bb7bb9680e0",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "3cfcf257d6df49d188d43aca17793939",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "32d72a2acc974cb4886956bd9ca8da05",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.FileObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "5441c98483c642448ee1395c9f2ba8a9",
+      "Inputs": [
+        {
+          "Id": "d10e52878bef46498b6b2e6314c3f22d",
+          "Name": "path",
+          "Description": "Path to the file.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7d146bb369f04ecba76e9571fcc94b15",
+          "Name": "file",
+          "Description": "File object",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a file object from a path."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nfrom Autodesk.Revit.DB import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables\r\ndataEnteringNode = IN\r\n\r\n# Get the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Input from the Excel data\r\nexcel_data = IN[0]  # List of rows from the Excel sheet\r\n\r\n# Start a transaction to make changes in the Revit model\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n# Iterate through the Excel data (skipping header rows if necessary)\r\nfor row in excel_data[1:]:  # Start from the second row, assuming the first row is a header\r\n    if len(row) < 2:\r\n        continue  # Skip rows with insufficient data\r\n\r\n    load_name, unique_id = row[0], row[1]\r\n\r\n    # Get the element by UniqueId\r\n    element = doc.GetElement(unique_id)\r\n    if element:\r\n        electrical_systems = element.MEPModel.GetElectricalSystems()\r\n        for electrical_system in electrical_systems:\r\n            # Update the Load Name\r\n            if electrical_system and electrical_system.LoadName != load_name:\r\n                electrical_system.LoadName = load_name\r\n\r\n# End the transaction\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\n# Output the result\r\nOUT = \"Load names updated successfully!\"\r\n",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "a9279c43ba7b4da7b4a8c34ecd096f6b",
+      "Inputs": [
+        {
+          "Id": "04e9e6a772834ff5a2110890c27db12a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "07655c80a692403f9ccf447f8424345f",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "",
+      "InputValue": "No file selected.",
+      "NodeType": "ExtensionNode",
+      "Id": "95e9556ac0ef4847957713b5e118862c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a6ee488ec0ee4ee4bcffdd569cdda865",
+          "Name": "",
+          "Description": "File Path",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a file on the system to get its file path."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "855d1a1c4cf7419e8fcf2eeb1d41dd34",
+      "End": "04e9e6a772834ff5a2110890c27db12a",
+      "Id": "2ae1aa236f3a43dbaaf0d5787a22c1dd",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d9af722b683c47a48a5b5bb7bb9680e0",
+      "End": "4e878805dcde40f7a13b3d98eee2673d",
+      "Id": "eac5cb72393a473ba8f27d72b0129dcf",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "32d72a2acc974cb4886956bd9ca8da05",
+      "End": "e0b617354b654590ab8c787e6c7a627c",
+      "Id": "798ab503ebf344a79e02e74a4adaf0f6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "32d72a2acc974cb4886956bd9ca8da05",
+      "End": "506f19ed1a724f7f8d0c3bff5a1cda3b",
+      "Id": "962fbacd7ddc4e86a705e3ffe7b43035",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "7d146bb369f04ecba76e9571fcc94b15",
+      "End": "e5b28dc151254d40bf29c00a891f422f",
+      "Id": "1041f9ba53ab41108cee67cebbe11b39",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a6ee488ec0ee4ee4bcffdd569cdda865",
+      "End": "d10e52878bef46498b6b2e6314c3f22d",
+      "Id": "30414466f6a7489b973f9185527bef00",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.16",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "3.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.16.2.5624",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Data.ImportExcel",
+        "ShowGeometry": true,
+        "Id": "5760211e6efd4ed19653cb063ec0158f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 730.0,
+        "Y": 341.0
+      },
+      {
+        "Name": "String",
+        "ShowGeometry": true,
+        "Id": "901acda0c49941878776a6fda1f210e4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 211.16651532208175,
+        "Y": 492.62026192714092
+      },
+      {
+        "Name": "Boolean",
+        "ShowGeometry": true,
+        "Id": "3cfcf257d6df49d188d43aca17793939",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 244.29258466050641,
+        "Y": 664.07871472426757
+      },
+      {
+        "Name": "File From Path",
+        "ShowGeometry": true,
+        "Id": "5441c98483c642448ee1395c9f2ba8a9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 399.90345184270979,
+        "Y": 234.80735698025751
+      },
+      {
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Id": "a9279c43ba7b4da7b4a8c34ecd096f6b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1150.0551495003674,
+        "Y": 371.1010130639807
+      },
+      {
+        "Name": "File Path",
+        "ShowGeometry": true,
+        "Id": "95e9556ac0ef4847957713b5e118862c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -30.344592058008971,
+        "Y": 225.39443554325027
+      }
+    ],
+    "Annotations": [],
+    "X": 284.763863065891,
+    "Y": 92.156637851854015,
+    "Zoom": 0.67900743610005732
+  }
+}

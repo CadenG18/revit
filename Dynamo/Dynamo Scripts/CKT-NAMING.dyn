@@ -1,0 +1,597 @@
+{
+  "Uuid": "926f7b0c-39e6-40a5-9f14-bdf287c395b2",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "CKT-NAMING",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Electrical import *\r\nimport System.Collections.Generic\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Get the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Get all family instances of the specified types\r\nelement_types = ['EF_Duplex Receptacle_R2018']\r\nelements = FilteredElementCollector(doc)\\\r\n    .OfClass(FamilyInstance)\\\r\n    .WhereElementIsNotElementType()\\\r\n    .ToElements()\r\n\r\n# Initialize a dictionary to count load names\r\nload_name_counts = {}\r\n\r\n# First pass: count occurrences of each load name\r\nfor elem in elements:\r\n    if elem.Symbol.Family.Name in element_types:\r\n        electrical_systems = elem.MEPModel.GetElectricalSystems()\r\n        for electrical_system in electrical_systems:\r\n            load_name = electrical_system.LoadName if electrical_system.LoadName else \"N/A\"\r\n            if load_name in load_name_counts:\r\n                load_name_counts[load_name] += 1\r\n            else:\r\n                load_name_counts[load_name] = 1\r\n\r\n# Second pass: filter out elements with duplicate load names\r\nresults = []\r\nfor elem in elements:\r\n    if elem.Symbol.Family.Name in element_types:\r\n        electrical_systems = elem.MEPModel.GetElectricalSystems()\r\n        for electrical_system in electrical_systems:\r\n            load_name = electrical_system.LoadName if electrical_system.LoadName else \"N/A\"\r\n            if load_name_counts.get(load_name, 0) == 1:\r\n                # Get the required parameters\r\n                load_param = electrical_system.get_Parameter(BuiltInParameter.RBS_ELEC_APPARENT_LOAD)\r\n                voltage_param = electrical_system.get_Parameter(BuiltInParameter.RBS_ELEC_VOLTAGE)\r\n\r\n                apparent_load = load_param.AsValueString() if load_param and load_param.HasValue else \"N/A\"\r\n                voltage = voltage_param.AsValueString() if voltage_param and voltage_param.HasValue else \"N/A\"\r\n                \r\n                rating = electrical_system.Rating if electrical_system.Rating else 0.0\r\n                poles_number = electrical_system.PolesNumber if electrical_system.PolesNumber else 0\r\n                panel_name = electrical_system.PanelName if electrical_system.PanelName else \"N/A\"\r\n                unique_id = elem.UniqueId\r\n\r\n                # Append the results with UniqueId included\r\n                results.append((load_name, unique_id, apparent_load, voltage, poles_number, rating, panel_name))\r\n\r\n# Assign your output to the OUT variable\r\nOUT = results\r\n\r\n\r\n",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "1887021cec0e460b83dd242b5626b821",
+      "Inputs": [
+        {
+          "Id": "2ce801cf14244a3fb0831039f8e809d6",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ff85a0853dbe4affb61fcd6bc6a2f2f8",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ExportToExcel@string,string,int,int,var[][],bool,bool",
+      "Id": "0477fc6fe5d74f12a14a4484a6002a0b",
+      "Inputs": [
+        {
+          "Id": "e6b0bf1a0ed2431a88d0dbbe94c2de7b",
+          "Name": "filePath",
+          "Description": "File representing the Excel workbook\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ea6e2e27b9284160bbe80c0f6a2f55c3",
+          "Name": "sheetName",
+          "Description": "Name of the worksheet containing data\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e49bb4355aff4fe0b58b18d7aa5618a3",
+          "Name": "startRow",
+          "Description": "Start row for writing data. Enter 0 for Row 1, 1 for Row 2, etc.\n\nint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "564f3c104c3e47d7bd5711216cc0c37b",
+          "Name": "startColumn",
+          "Description": "Start column for writing data. Enter 0 for Column A, 1 for Column B, etc.\n\nint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7f0e0f6cbb734af5a022c0dfab51b223",
+          "Name": "data",
+          "Description": "Data to write to the spreadsheet\n\nvar[][]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1532ca9cd2d841ff8e636571008b7e8f",
+          "Name": "overWrite",
+          "Description": "Toggle to clear spreadsheet before writing\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fabc25dc1e0746c69d7ebe5191b63223",
+          "Name": "writeAsString",
+          "Description": "Toggle to switch between writing Excel file as strings\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "007ded18b3cd4644a54d4ad6d1c5ead0",
+          "Name": "data",
+          "Description": "Rows of data from the Excel worksheet",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Write data to a Microsoft Excel spreadsheet. Data is written by row with sublists to be written in successive rows. Rows and columns are zero-indexed; for example, the value in the data list at [0,0] will be written to cell A1. Null values and empty lists are written to Excel as empty cells. This node requires Microsoft Excel to be installed.\n\nData.ExportToExcel (filePath: string, sheetName: string, startRow: int, startColumn: int, data: var[][], overWrite: bool = false, writeAsString: bool = false): var[][]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Load_Names",
+      "Id": "6ca8a0a32d2942daac24461336ef2f77",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9060b4d2f58f44c2a0dc028c0350fc5a",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.IntegerSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Integer",
+      "InputValue": 0,
+      "MaximumValue": 100,
+      "MinimumValue": 0,
+      "StepValue": 1,
+      "Id": "c7bcab1d92344e78a7dfecb23bffdb3e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "52bebbb0496148ba8d06ea522eced002",
+          "Name": "",
+          "Description": "Int64",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces integer values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "299b811c2f9a4da0846d741100a5a8a9",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "213d00a8bbfb43eeb95e3fd45e5e9758",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "5729a2a08b654c87911c375c4543ac89",
+      "Inputs": [
+        {
+          "Id": "fc4a0bd1d7ac4cb9a3fb5fc5b066b8c7",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e5a62c4174b64358b12af225682426ee",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "84198d925df744b487d763dddf6eaf8f",
+          "Name": "list",
+          "Description": "A list (type: var[]..[])",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.IntegerSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Integer",
+      "InputValue": 1,
+      "MaximumValue": 100,
+      "MinimumValue": 0,
+      "StepValue": 1,
+      "Id": "0c9c3aa5e8cf4985b5e0d085cfcfbb72",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b1f888f34a654d119bfd363ac62217c9",
+          "Name": "",
+          "Description": "Int64",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces integer values."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "c224588186084dc98652fbf3884f8078",
+      "Inputs": [
+        {
+          "Id": "8c6e934469c34145a757735d38ddb647",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b275382263ea48e5804fcf7b27a39534",
+          "Name": "amount",
+          "Description": "Layers of list nesting to remove (-1 will remove all list nestings)\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5b3e634ba7b14627a3c091d22e44c495",
+          "Name": "list",
+          "Description": "Flattened list by amount",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amount: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "headers = [ [\"Load Name\", \"Element ID\", \"kVA\", \"Voltage\", \"Phase\", \"Breaker Size\", \"Paneled By\"] ];",
+      "Id": "b5bf5c8f03ec4ce8a3c57d1a891b3446",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "76f8e4dd55cf42f4a6a5bcfe54f9c84d",
+          "Name": "",
+          "Description": "headers",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Electrical import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Get the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Get all family instances of the specified types\r\nelement_types = ['EF_Duplex Receptacle_R2018']\r\nelements = FilteredElementCollector(doc)\\\r\n    .OfClass(FamilyInstance)\\\r\n    .WhereElementIsNotElementType()\\\r\n    .ToElements()\r\n\r\n# Initialize a dictionary to track seen load names\r\nseen_load_names = {}\r\n\r\n# Initialize results list\r\nresults = []\r\n\r\n# Iterate through elements\r\nfor elem in elements:\r\n    if elem.Symbol.Family.Name in element_types:\r\n        electrical_systems = elem.MEPModel.GetElectricalSystems()\r\n        for electrical_system in electrical_systems:\r\n            load_name = electrical_system.LoadName if electrical_system.LoadName else \"N/A\"\r\n\r\n            # Skip if load name already exists\r\n            if load_name in seen_load_names:\r\n                continue\r\n\r\n            # Mark the load name as seen\r\n            seen_load_names[load_name] = True\r\n            \r\n            # Get the required parameters\r\n            load_param = electrical_system.get_Parameter(BuiltInParameter.RBS_ELEC_APPARENT_LOAD)\r\n            voltage_param = electrical_system.get_Parameter(BuiltInParameter.RBS_ELEC_VOLTAGE)\r\n\r\n            apparent_load = load_param.AsValueString() if load_param and load_param.HasValue else \"N/A\"\r\n            voltage = voltage_param.AsValueString() if voltage_param and voltage_param.HasValue else \"N/A\"\r\n            \r\n            rating = electrical_system.Rating if electrical_system.Rating else 0.0\r\n            poles_number = electrical_system.PolesNumber if electrical_system.PolesNumber else 0\r\n            panel_name = electrical_system.PanelName if electrical_system.PanelName else \"N/A\"\r\n            unique_id = elem.UniqueId  # Add UniqueId for tracking\r\n            \r\n            # Append to results\r\n            results.append((load_name, unique_id, apparent_load, voltage, poles_number, rating, panel_name))\r\n\r\n# Assign your output to the OUT variable\r\nOUT = results\r\n",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "119410c7268e46a993b3bffd776f34b9",
+      "Inputs": [
+        {
+          "Id": "b4067e41c4b34ec6b89b03caef365ecf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "04010e9aca114b83a828937cedcbc633",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "",
+      "InputValue": "No file selected.",
+      "NodeType": "ExtensionNode",
+      "Id": "014a1c1b3e534b9ebf8c0b3ae05d2eb0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5264d8c00b394202a42fbf3c9813b638",
+          "Name": "",
+          "Description": "File Path",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a file on the system to get its file path."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "9060b4d2f58f44c2a0dc028c0350fc5a",
+      "End": "ea6e2e27b9284160bbe80c0f6a2f55c3",
+      "Id": "9480d106457e4912a28e3bfdce7a7e22",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "52bebbb0496148ba8d06ea522eced002",
+      "End": "e49bb4355aff4fe0b58b18d7aa5618a3",
+      "Id": "20c69117e5b24d8891921f3692f7f0db",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "52bebbb0496148ba8d06ea522eced002",
+      "End": "564f3c104c3e47d7bd5711216cc0c37b",
+      "Id": "0bdaa0d206cb41e5b54bf4ad9e6c7c14",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "213d00a8bbfb43eeb95e3fd45e5e9758",
+      "End": "1532ca9cd2d841ff8e636571008b7e8f",
+      "Id": "fb07abf40e764d04abf86899122a7559",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "84198d925df744b487d763dddf6eaf8f",
+      "End": "8c6e934469c34145a757735d38ddb647",
+      "Id": "6840508ee39644d3a63b35aabfc30f1f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b1f888f34a654d119bfd363ac62217c9",
+      "End": "b275382263ea48e5804fcf7b27a39534",
+      "Id": "9e95deb2322f4a0d89fa64d7409a1e53",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5b3e634ba7b14627a3c091d22e44c495",
+      "End": "7f0e0f6cbb734af5a022c0dfab51b223",
+      "Id": "e862f33c4e7341cf9891ec2480a90924",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "76f8e4dd55cf42f4a6a5bcfe54f9c84d",
+      "End": "fc4a0bd1d7ac4cb9a3fb5fc5b066b8c7",
+      "Id": "85f5fa25bf8940079de048bab46998f7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "04010e9aca114b83a828937cedcbc633",
+      "End": "e5a62c4174b64358b12af225682426ee",
+      "Id": "c3e934225f624405b5edadf895932a29",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5264d8c00b394202a42fbf3c9813b638",
+      "End": "e6b0bf1a0ed2431a88d0dbbe94c2de7b",
+      "Id": "7caac3378fe1481890bcff7c98bec706",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.16",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "3.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.16.2.5624",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Id": "1887021cec0e460b83dd242b5626b821",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 480.4400828892833,
+        "Y": 332.47529141770485
+      },
+      {
+        "Name": "Data.ExportToExcel",
+        "ShowGeometry": true,
+        "Id": "0477fc6fe5d74f12a14a4484a6002a0b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1710.6546394308277,
+        "Y": 45.071221773076559
+      },
+      {
+        "Name": "String",
+        "ShowGeometry": true,
+        "Id": "6ca8a0a32d2942daac24461336ef2f77",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 949.32840800711017,
+        "Y": -138.14796439022928
+      },
+      {
+        "Name": "Integer Slider",
+        "ShowGeometry": true,
+        "Id": "c7bcab1d92344e78a7dfecb23bffdb3e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 859.032186522956,
+        "Y": 32.916633329753552
+      },
+      {
+        "Name": "Boolean",
+        "ShowGeometry": true,
+        "Id": "299b811c2f9a4da0846d741100a5a8a9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1073.4131031322681,
+        "Y": 582.89268896126669
+      },
+      {
+        "Name": "List Create",
+        "ShowGeometry": true,
+        "Id": "5729a2a08b654c87911c375c4543ac89",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 860.09147631819383,
+        "Y": 214.79160024515011
+      },
+      {
+        "Name": "Integer Slider",
+        "ShowGeometry": true,
+        "Id": "0c9c3aa5e8cf4985b5e0d085cfcfbb72",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 850.57020363951369,
+        "Y": 384.02524369055141
+      },
+      {
+        "Name": "List.Flatten",
+        "ShowGeometry": true,
+        "Id": "c224588186084dc98652fbf3884f8078",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1282.4241991275114,
+        "Y": 218.48764234007967
+      },
+      {
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Id": "b5bf5c8f03ec4ce8a3c57d1a891b3446",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -73.902323839922929,
+        "Y": 116.93554754362805
+      },
+      {
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Id": "119410c7268e46a993b3bffd776f34b9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 480.59774864194048,
+        "Y": 490.08855160856643
+      },
+      {
+        "Name": "File Path",
+        "ShowGeometry": true,
+        "Id": "014a1c1b3e534b9ebf8c0b3ae05d2eb0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 941.51189047528442,
+        "Y": -307.25992900299781
+      }
+    ],
+    "Annotations": [],
+    "X": -280.51049830496731,
+    "Y": 398.5542348312897,
+    "Zoom": 0.72243220696438359
+  }
+}
